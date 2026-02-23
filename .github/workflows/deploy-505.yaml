@@ -7,7 +7,7 @@ on:
       - 'force-app/**'
 
 jobs:
-  Deploy-to-sffnoobs-environment:
+  Deploy-to-agentforce505-environment:
       runs-on: ubuntu-latest
       environment: agentforce505
       steps:
