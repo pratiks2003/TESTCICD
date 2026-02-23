@@ -1,0 +1,269 @@
+<template>
+    <lightning-card title="Package XML Combiner" icon-name="utility:merge">
+        <div class="slds-p-horizontal_medium">
+            <!-- Input Section -->
+            <div class="slds-form-element slds-m-bottom_medium">
+                <label class="slds-form-element__label" for="xml-input">
+                    <strong>Input XML (Multiple package.xml files)</strong>
+                </label>
+                <div class="slds-form-element__control">
+                    <lightning-textarea
+                        id="xml-input"
+                        value={inputXml}
+                        placeholder="Paste your XML content here... Can contain multiple package.xml files"
+                        rows="10"
+                        onchange={handleInputChange}
+                        class="slds-textarea"
+                    ></lightning-textarea>
+                </div>
+                <div class="slds-form-element__help">
+                    Supports multiple XML packages separated by quotes or other text. The component will extract and merge all valid package.xml structures.
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="slds-grid slds-gutters slds-m-bottom_medium">
+                <div class="slds-col">
+                    <lightning-button
+                        label="Clear Input"
+                        variant="neutral"
+                        onclick={clearInput}
+                        class="slds-m-right_small"
+                    ></lightning-button>
+                    <lightning-button
+                        label="Combine XML"
+                        variant="brand"
+                        onclick={combinePackageXml}
+                        disabled={isProcessing}
+                        class="slds-m-right_small"
+                    ></lightning-button>
+                </div>
+            </div>
+
+            <!-- Processing Indicator -->
+            <template if:true={isProcessing}>
+                <div class="slds-m-bottom_medium">
+                    <lightning-spinner
+                        alternative-text="Processing XML..."
+                        size="small"
+                    ></lightning-spinner>
+                    <span class="slds-m-left_small">Processing XML files...</span>
+                </div>
+            </template>
+
+            <!-- Error Message -->
+            <template if:true={errorMessage}>
+                <div class="slds-m-bottom_medium">
+                    <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_error">
+                        <span class="slds-assistive-text">Error</span>
+                        <lightning-icon
+                            icon-name="utility:error"
+                            variant="inverse"
+                            size="small"
+                            class="slds-m-right_small"
+                        ></lightning-icon>
+                        <h2>{errorMessage}</h2>
+                    </div>
+                </div>
+            </template>
+
+            <!-- Processing Statistics -->
+            <template if:true={hasStats}>
+                <div class="slds-box slds-theme_success slds-m-bottom_medium">
+                    <h3 class="slds-text-heading_small slds-m-bottom_small">
+                        <lightning-icon icon-name="utility:success" size="small" class="slds-m-right_x-small"></lightning-icon>
+                        Processing Statistics
+                    </h3>
+                    <div class="slds-grid slds-wrap slds-gutters_small">
+                        <div class="slds-col slds-size_1-of-2 slds-medium-size_1-of-4">
+                            <div class="stat-card">
+                                <div class="stat-number">{packagesProcessed}</div>
+                                <div class="stat-label">Packages Processed</div>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-size_1-of-2 slds-medium-size_1-of-4">
+                            <div class="stat-card">
+                                <div class="stat-number">{metadataTypes}</div>
+                                <div class="stat-label">Metadata Types</div>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-size_1-of-2 slds-medium-size_1-of-4">
+                            <div class="stat-card">
+                                <div class="stat-number">{totalMembers}</div>
+                                <div class="stat-label">Total Members</div>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-size_1-of-2 slds-medium-size_1-of-4">
+                            <div class="stat-card">
+                                <div class="stat-number highlight-number">{duplicatesRemoved}</div>
+                                <div class="stat-label">Duplicates Removed</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Merged Types Details -->
+                    <template if:true={hasMergedTypes}>
+                        <div class="slds-m-top_medium">
+                            <div class="expandable-header" onclick={toggleMergedTypes}>
+                                <lightning-icon 
+                                    icon-name={mergedTypesChevron} 
+                                    size="x-small"
+                                    class="slds-m-right_x-small chevron-icon"></lightning-icon>
+                                <h4 class="slds-text-heading_x-small">
+                                    Types Merged Across Packages: ({mergedTypesCount}) - Click to expand
+                                </h4>
+                            </div>
+                            <template if:true={showMergedTypes}>
+                                <div class="slds-box slds-box_x-small slds-theme_default slds-m-top_small">
+                                    <template for:each={processingStats.mergedTypes} for:item="mergedType">
+                                        <div key={mergedType.type} class="slds-m-bottom_small">
+                                            <div class="slds-grid slds-grid_align-spread slds-m-bottom_x-small">
+                                                <div class="slds-col">
+                                                    <span class="slds-badge slds-badge_lightest">
+                                                        <strong>{mergedType.type}</strong>
+                                                    </span>
+                                                </div>
+                                                <div class="slds-col slds-no-flex">
+                                                    <span class="merge-count">appeared in {mergedType.count} packages</span>
+                                                </div>
+                                            </div>
+                                            <!-- Show actual members for this type -->
+                                            <template if:true={mergedType.members}>
+                                                <div class="members-container">
+                                                    <h5 class="slds-text-body_small slds-m-bottom_x-small"><strong>Components:</strong></h5>
+                                                    <div class="members-list">
+                                                        <template for:each={mergedType.members} for:item="member">
+                                                            <span key={member} class="slds-badge slds-badge_outline slds-m-right_xx-small slds-m-bottom_xx-small">
+                                                                {member}
+                                                            </span>
+                                                        </template>
+                                                    </div>
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </template>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+                    
+                    <!-- Duplicates by Type -->
+                    <template if:true={hasDuplicates}>
+                        <div class="slds-m-top_medium">
+                            <div class="expandable-header" onclick={toggleDuplicates}>
+                                <lightning-icon 
+                                    icon-name={duplicatesChevron} 
+                                    size="x-small"
+                                    class="slds-m-right_x-small chevron-icon"></lightning-icon>
+                                <h4 class="slds-text-heading_x-small">
+                                    Duplicates Removed by Type: ({duplicatesTypesCount}) - Click to expand
+                                </h4>
+                            </div>
+                            <template if:true={showDuplicates}>
+                                <div class="slds-box slds-box_x-small slds-theme_default slds-m-top_small">
+                                    <template for:each={processingStats.duplicatesByType} for:item="duplicateType">
+                                        <div key={duplicateType.type} class="slds-m-bottom_small">
+                                            <div class="slds-grid slds-grid_align-spread slds-m-bottom_x-small">
+                                                <div class="slds-col">
+                                                    <span class="slds-badge slds-badge_inverse">
+                                                        <strong>{duplicateType.type}</strong>
+                                                    </span>
+                                                </div>
+                                                <div class="slds-col slds-no-flex">
+                                                    <span class="duplicate-count">{duplicateType.count} duplicates removed</span>
+                                                </div>
+                                            </div>
+                                            <!-- Show actual duplicate members -->
+                                            <template if:true={duplicateType.duplicateMembers}>
+                                                <div class="members-container">
+                                                    <h5 class="slds-text-body_small slds-m-bottom_x-small"><strong>Duplicate Components:</strong></h5>
+                                                    <div class="members-list">
+                                                        <template for:each={duplicateType.duplicateMembers} for:item="member">
+                                                            <span key={member} class="slds-badge slds-badge_lightest slds-m-right_xx-small slds-m-bottom_xx-small">
+                                                                {member} <span class="duplicate-indicator">(duplicate)</span>
+                                                            </span>
+                                                        </template>
+                                                    </div>
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </template>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+                </div>
+            </template>
+
+            <!-- Output Section -->
+            <template if:true={outputXml}>
+                <div class="slds-form-element slds-m-bottom_medium">
+                    <div class="slds-grid slds-grid_align-spread slds-m-bottom_small">
+                        <label class="slds-form-element__label">
+                            <strong>Combined Package XML Output</strong>
+                        </label>
+                        <div>
+                            <lightning-button
+                                label="Copy to Clipboard"
+                                variant="neutral"
+                                onclick={copyToClipboard}
+                                class="slds-m-right_small"
+                            ></lightning-button>
+                            <lightning-button-menu 
+                                alternative-text="Download Options" 
+                                variant="success"
+                                menu-alignment="right">
+                                <lightning-menu-item 
+                                    value="xml" 
+                                    label="Download as XML" 
+                                    onclick={downloadXml}>
+                                </lightning-menu-item>
+                                <lightning-menu-item 
+                                    value="txt" 
+                                    label="Download as TXT" 
+                                    onclick={downloadAsTxt}>
+                                </lightning-menu-item>
+                            </lightning-button-menu>
+                        </div>
+                    </div>
+                    <div class="slds-form-element__control">
+                        <lightning-textarea
+                            value={outputXml}
+                            readonly
+                            rows="15"
+                            class="slds-textarea"
+                        ></lightning-textarea>
+                    </div>
+                </div>
+            </template>
+
+            <!-- Instructions -->
+            <div class="slds-box slds-theme_shade slds-m-top_medium">
+                <h3 class="slds-text-heading_small slds-m-bottom_small">Instructions:</h3>
+                <ul class="slds-list_dotted">
+                    <li>Paste multiple package.xml files in the input area</li>
+                    <li>The component handles various formats including quoted strings and extra text</li>
+                    <li>All duplicate members are automatically removed</li>
+                    <li>Types are sorted alphabetically</li>
+                    <li>The highest version number is used in the output</li>
+                    <li>Click "Combine XML" to process and generate the combined package.xml</li>
+                </ul>
+            </div>
+
+            <!-- Features -->
+            <div class="slds-box slds-theme_info slds-m-top_small">
+                <h3 class="slds-text-heading_small slds-m-bottom_small">Enhanced Features:</h3>
+                <ul class="slds-list_dotted">
+                    <li><strong>Edge Case Handling:</strong> Handles extra quotes, escape characters, and mixed content</li>
+                    <li><strong>Duplicate Removal:</strong> Automatically removes duplicate members within the same type</li>
+                    <li><strong>Type Consolidation:</strong> Combines members from the same metadata type across files</li>
+                    <li><strong>Version Management:</strong> Uses the highest version number found</li>
+                    <li><strong>Sorting:</strong> Sorts types and members alphabetically</li>
+                    <li><strong>Statistics Tracking:</strong> Shows detailed processing statistics and duplicate analysis</li>
+                    <li><strong>Merge Analysis:</strong> Displays which types were merged across multiple packages</li>
+                    <li><strong>Validation:</strong> Provides clear error messages for invalid XML</li>
+                </ul>
+            </div>
+        </div>
+    </lightning-card>
+</template>

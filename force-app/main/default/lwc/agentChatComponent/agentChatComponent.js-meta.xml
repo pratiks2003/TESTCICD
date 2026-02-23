@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>59.0</apiVersion>
+    <isExposed>true</isExposed>
+    <masterLabel>Agent Chat</masterLabel>
+    <description>AgentForce Chat Component for Experience Cloud</description>
+    <targets>
+        <target>lightningCommunity__Page</target>
+        <target>lightningCommunity__Default</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightningCommunity__Default">
+            <property name="language" type="String" default="en_US" label="Chat Language" description="Language code for the chat (e.g., en_US)" />
+            <property name="orgId" type="String" default="00DgL0000032y6Q" label="Organization ID" description="Your Salesforce Org ID" />
+            <property name="deploymentId" type="String" default="EmbededAgent" label="Deployment ID" description="The Embedded Service deployment ID" />
+            <property name="siteUrl" type="String" default="https://orgfarm-8d97b4d405-dev-ed.develop.my.site.com/ESWEmbededAgent1747225512209" label="Site URL" description="URL of your Experience Cloud site with ESW deployment" />
+            <property name="scrtUrl" type="String" default="https://orgfarm-8d97b4d405-dev-ed.develop.my.salesforce-scrt.com" label="SCRT URL" description="Salesforce SCRT URL" />
+            <property name="showDebugInfo" type="Boolean" default="true" label="Show Debug Info" description="Display debug information to help troubleshoot issues" />
+            <property name="useScript" type="Boolean" default="false" label="Use Script Loading" description="Use dynamic script loading method (false for direct embed method)" />
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

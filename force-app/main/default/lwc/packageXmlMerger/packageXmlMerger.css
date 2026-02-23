@@ -1,0 +1,100 @@
+/* packageXmlMerger.css */
+
+.input-area {
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+}
+
+.result-area {
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    background-color: #f3f3f3;
+}
+
+.process-button {
+    font-size: 16px;
+    font-weight: bold;
+    padding: 12px 24px;
+}
+
+.stat-box {
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    border: 1px solid #e0e5ee;
+    border-radius: 8px;
+    padding: 16px;
+    transition: transform 0.2s ease;
+}
+
+.stat-box:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.component-item {
+    background-color: #f8f9fa;
+    border: 1px solid #e0e5ee;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    margin-bottom: 4px;
+    transition: background-color 0.2s ease;
+}
+
+.component-item:hover {
+    background-color: #e8f4f8;
+}
+
+lightning-card {
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.slds-card__header {
+    background: linear-gradient(135deg, #1589ee 0%, #0070d2 100%);
+    color: white;
+    border-radius: 12px 12px 0 0;
+}
+
+.slds-card__header .slds-card__header-title {
+    color: white;
+    font-weight: bold;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .input-area {
+        font-size: 14px;
+    }
+    
+    .result-area {
+        font-size: 12px;
+    }
+    
+    .stat-box {
+        padding: 12px;
+    }
+}
+
+/* Loading animation enhancement */
+.slds-spinner {
+    opacity: 0.8;
+}
+
+/* Success message styling */
+.slds-theme_success {
+    background-color: #04844b;
+    color: white;
+}
+
+/* Enhanced button styling */
+lightning-button[variant="brand"] {
+    background: linear-gradient(135deg, #1589ee 0%, #0070d2 100%);
+    border: none;
+    transition: all 0.3s ease;
+}
+
+lightning-button[variant="brand"]:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(21, 137, 238, 0.3);
+}

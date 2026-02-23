@@ -1,0 +1,102 @@
+<template>
+    <div class="slds-card">
+        <div class="slds-card__header slds-grid">
+            <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                <div class="slds-media__body">
+                    <h2 class="slds-card__header-title">Package.xml Merger</h2>
+                </div>
+            </header>
+        </div>
+        
+        <div class="slds-card__body slds-card__body_inner">
+            
+            <!-- Instructions -->
+            <div class="slds-box slds-theme_info slds-m-bottom_medium">
+                <p><strong>Instructions:</strong></p>
+                <ul>
+                    <li>Paste your concatenated package.xml content below</li>
+                    <li>Click "Merge Package XMLs" to process</li>
+                    <li>Copy the merged result</li>
+                </ul>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="slds-grid slds-gutters slds-m-bottom_medium">
+                <div class="slds-col">
+                    <button class="slds-button slds-button_neutral" onclick={loadSample}>Load Sample</button>
+                </div>
+                <div class="slds-col">
+                    <button class="slds-button slds-button_destructive" onclick={clearInput}>Clear</button>
+                </div>
+            </div>
+
+            <!-- Input Text Area -->
+            <div class="slds-form-element slds-m-bottom_medium">
+                <label class="slds-form-element__label">
+                    <strong>Paste your package.xml content:</strong>
+                </label>
+                <div class="slds-form-element__control">
+                    <textarea 
+                        class="slds-textarea" 
+                        rows="8" 
+                        placeholder="Paste your content here..."
+                        value={inputXml}
+                        onchange={handleInputChange}>
+                    </textarea>
+                </div>
+            </div>
+
+            <!-- Process Button with Conditional Rendering -->
+            <div class="slds-text-align_center slds-m-bottom_medium">
+                <template if:false={isProcessing}>
+                    <button 
+                        class="slds-button slds-button_brand" 
+                        onclick={processXml}>
+                        Merge Package XMLs
+                    </button>
+                </template>
+                <template if:true={isProcessing}>
+                    <button 
+                        class="slds-button slds-button_brand" 
+                        disabled>
+                        Processing...
+                    </button>
+                    <div class="slds-spinner_container slds-is-relative">
+                        <div role="status" class="slds-spinner slds-spinner_medium">
+                            <span class="slds-assistive-text">Loading</span>
+                            <div class="slds-spinner__dot-a"></div>
+                            <div class="slds-spinner__dot-b"></div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+
+            <!-- Results Section -->
+            <template if:true={hasResults}>
+                <div class="slds-box slds-m-bottom_medium">
+                    <h3>Results:</h3>
+                    <p>Packages: {statistics.packagesProcessed} | Components: {statistics.totalComponents} | Duplicates: {statistics.duplicatesRemoved}</p>
+                </div>
+
+                <div class="slds-m-bottom_medium">
+                    <button class="slds-button slds-button_success" onclick={copyToClipboard}>Copy Result</button>
+                </div>
+
+                <div class="slds-form-element">
+                    <label class="slds-form-element__label">
+                        <strong>Merged Package.xml:</strong>
+                    </label>
+                    <div class="slds-form-element__control">
+                        <textarea 
+                            class="slds-textarea" 
+                            rows="12" 
+                            readonly>
+                            {mergedXml}
+                        </textarea>
+                    </div>
+                </div>
+            </template>
+
+        </div>
+    </div>
+</template>

@@ -1,0 +1,42 @@
+/* agentChatComponent.css */
+.agent-chat-container {
+    position: relative;
+    min-height: 50px;
+    width: 100%;
+    padding: 1rem;
+}
+
+.loading-container {
+    padding: 0.75rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+}
+
+.loading-status {
+    display: flex;
+    align-items: center;
+    font-size: 0.875rem;
+}
+
+.loading-status.has-error {
+    color: #c23934;
+}
+
+.debug-info {
+    margin-top: 1rem;
+    padding: 0.75rem;
+    background-color: #f3f3f3;
+    border-radius: 4px;
+    font-size: 0.75rem;
+}
+
+.debug-list {
+    max-height: 200px;
+    overflow-y: auto;
+    padding-left: 1rem;
+}
+
+.debug-list li {
+    margin-bottom: 0.25rem;
+    font-family: monospace;
+}

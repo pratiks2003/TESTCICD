@@ -1,0 +1,26 @@
+<!-- agentChatComponent.html -->
+<template>
+    <div class="agent-chat-container">
+        <!-- Loading and error states -->
+        <template if:true={loadingState}>
+            <div class="loading-container">
+                <div class={loadingClass}>
+                    <lightning-icon icon-name={statusIcon} size="small" class="slds-m-right_x-small"></lightning-icon>
+                    <span>{loadingState}</span>
+                </div>
+            </div>
+        </template>
+        
+        <!-- Debug information -->
+        <template if:true={showDebugInfo}>
+            <div class="debug-info">
+                <h3>Debug Information:</h3>
+                <ul class="debug-list">
+                    <template for:each={debugInfo} for:item="info">
+                        <li key={info}>{info}</li>
+                    </template>
+                </ul>
+            </div>
+        </template>
+    </div>
+</template>
