@@ -1,6 +1,6 @@
 // packageXmlMerger.js - MINIMAL VERSION
 import { LightningElement, track } from 'lwc';
-import mergePackageXmls from '@salesforce/apex/PackageXmlMergerController.mergePackageXmls';
+import mergePackageXmls from '@salesforce/apex/PackageXmlProcessor.processPackageXml';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
 export default class PackageXmlMerger extends LightningElement {
